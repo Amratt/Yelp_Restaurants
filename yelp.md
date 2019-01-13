@@ -16,18 +16,87 @@ library(rpart)				        # Popular decision tree algorithm
 library(rpart.plot)			    	# Enhanced tree plots
 library(RColorBrewer)			  	# Color selection for fancy tree plot
 library(party)					      # Alternative decision tree algorithm
+```
+
+```
+## Loading required package: grid
+```
+
+```
+## Loading required package: mvtnorm
+```
+
+```
+## Loading required package: modeltools
+```
+
+```
+## Loading required package: stats4
+```
+
+```
+## Loading required package: strucchange
+```
+
+```
+## Loading required package: zoo
+```
+
+```
+## 
+## Attaching package: 'zoo'
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     as.Date, as.Date.numeric
+```
+
+```
+## Loading required package: sandwich
+```
+
+```r
 library(partykit)				      # Convert rpart object to BinaryTree
+```
+
+```
+## Loading required package: libcoin
+```
+
+```
+## 
+## Attaching package: 'partykit'
+```
+
+```
+## The following objects are masked from 'package:party':
+## 
+##     cforest, ctree, ctree_control, edge_simple, mob, mob_control,
+##     node_barplot, node_bivplot, node_boxplot, node_inner,
+##     node_surv, node_terminal, varimp
+```
+
+```r
 library(caret)					      # Just a data source for this script
+```
+
+```
+## Loading required package: lattice
+```
+
+```
+## Loading required package: ggplot2
+```
+
+```r
 library(e1071)
 library(tree)
 library(data.table)
 library(ggplot2)
 library(gridExtra)
-```
 
-## Loading the Yelp Dataset
-
-```r
 # load
 training.x<-read.csv("training.x.csv")
 training.x<-training.x[,-19]
@@ -35,12 +104,8 @@ training.y<-read.csv("training.y.csv")
 testing.x<-read.csv("testing.x.csv")
 testing.x<- testing.x[,-19]
 testing.y<- read.csv("testing.y.csv")
-```
-
-# Cleaning Dataset
 
 
-```r
 cnvrt.factor <- c(2:16)
 training.x<-subset(training.x, select = -c(X))
 training.x[,cnvrt.factor]<- lapply(training.x[,cnvrt.factor], factor)
@@ -50,11 +115,8 @@ testing.x<-subset(testing.x, select = -c(X))
 testing.x[,cnvrt.factor]<- lapply(testing.x[,cnvrt.factor] , factor)
 testing.y<-subset(testing.y, select = -c(X))
 testing.y<- as.factor(testing.y$x)
-```
 
-## Model Tuning For Classfication Tree 
 
-```r
 train_control<- trainControl(method="cv", number=10)
 
 # train the model 
@@ -72,13 +134,13 @@ clasmodel
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 15803, 15803, 15802, 15802, 15802, 15802, ... 
+## Summary of sample sizes: 15802, 15802, 15802, 15803, 15802, 15802, ... 
 ## Resampling results across tuning parameters:
 ## 
 ##   cp          Accuracy   Kappa    
-##   0.04216216  0.9485132  0.7048075
-##   0.05675676  0.9396276  0.6249972
-##   0.06283784  0.9222585  0.3974389
+##   0.04216216  0.9495959  0.7125984
+##   0.05675676  0.9411659  0.6368187
+##   0.06283784  0.9211725  0.3650950
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
 ## The final value used for the model was cp = 0.04216216.
@@ -88,11 +150,10 @@ clasmodel
 plot(clasmodel)
 ```
 
-![](yelp_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
-
-## Model Validation
+![](yelp_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
 
 ```r
+# Model Validation
 tree.pred<- predict(clasmodel, testing.x)
 testResultsTREE <- data.frame(obs = testing.y, pred = tree.pred)
 tree.summary<-defaultSummary(testResultsTREE)
@@ -129,7 +190,6 @@ cm.tree2
 ## 
 ```
 
-
 ```r
 # ROC
 
@@ -146,7 +206,24 @@ test.converted<-sapply(testResultsTREE$obs,goodbad)
 pred.converted<-sapply(testResultsTREE$pred,goodbad)
 
 library(ROCR)
+```
 
+```
+## Loading required package: gplots
+```
+
+```
+## 
+## Attaching package: 'gplots'
+```
+
+```
+## The following object is masked from 'package:stats':
+## 
+##     lowess
+```
+
+```r
 tree_scores <- prediction(pred.converted, test.converted)
 
 #ROC Curve
@@ -161,7 +238,7 @@ abline(0,1, lty = 300, col = "green",  lwd = 3)
 grid(col="aquamarine")
 ```
 
-![](yelp_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](yelp_files/figure-html/unnamed-chunk-1-2.png)<!-- -->
 
 ```r
 # AUC
@@ -173,3 +250,4 @@ tree_auc2 # Area Under the Curve
 ```
 ## [1] 0.8332471
 ```
+

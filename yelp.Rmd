@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Loading Libraries
-```{r message=FALSE}
+```{r}
 library(rpart)				        # Popular decision tree algorithm
 library(rpart.plot)			    	# Enhanced tree plots
 library(RColorBrewer)			  	# Color selection for fancy tree plot
@@ -24,10 +24,7 @@ library(tree)
 library(data.table)
 library(ggplot2)
 library(gridExtra)
-```
 
-## Loading the Yelp Dataset
-```{r message=FALSE}
 # load
 training.x<-read.csv("training.x.csv")
 training.x<-training.x[,-19]
@@ -35,11 +32,8 @@ training.y<-read.csv("training.y.csv")
 testing.x<-read.csv("testing.x.csv")
 testing.x<- testing.x[,-19]
 testing.y<- read.csv("testing.y.csv")
-```
 
-# Cleaning Dataset
 
-```{r message=FALSE}
 cnvrt.factor <- c(2:16)
 training.x<-subset(training.x, select = -c(X))
 training.x[,cnvrt.factor]<- lapply(training.x[,cnvrt.factor], factor)
@@ -49,10 +43,8 @@ testing.x<-subset(testing.x, select = -c(X))
 testing.x[,cnvrt.factor]<- lapply(testing.x[,cnvrt.factor] , factor)
 testing.y<-subset(testing.y, select = -c(X))
 testing.y<- as.factor(testing.y$x)
-```
 
-## Model Tuning For Classfication Tree 
-```{r}
+
 train_control<- trainControl(method="cv", number=10)
 
 # train the model 
@@ -60,18 +52,14 @@ train_control<- trainControl(method="cv", number=10)
 clasmodel<- train(x=training.x, y=training.y, trControl=train_control, method="rpart")
 clasmodel
 plot(clasmodel)
-```
 
-## Model Validation
-```{r}
+# Model Validation
 tree.pred<- predict(clasmodel, testing.x)
 testResultsTREE <- data.frame(obs = testing.y, pred = tree.pred)
 tree.summary<-defaultSummary(testResultsTREE)
 cm.tree2<-confusionMatrix(tree.pred,testing.y, positive = "Good")
 cm.tree2
-```
 
-```{r message=FALSE}
 # ROC
 
 # convert good to 1, bad to 0
@@ -106,3 +94,4 @@ tree_auc <- performance(tree_scores, "auc")
 tree_auc2<- as.numeric(tree_auc@y.values)
 tree_auc2 # Area Under the Curve
 ```
+
