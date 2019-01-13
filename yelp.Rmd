@@ -1,5 +1,5 @@
 ---
-title: "yelp"
+title: "Yelp"
 author: "Amr Attyah"
 date: "1/13/2019"
 output: 
@@ -39,6 +39,8 @@ testing.x<- testing.x[,-19]
 testing.y<- read.csv("testing.y.csv")
 ```
 
+## Cleaning The Dataset
+```{r}
 cnvrt.factor <- c(2:16)
 training.x<-subset(training.x, select = -c(X))
 training.x[,cnvrt.factor]<- lapply(training.x[,cnvrt.factor], factor)
@@ -48,17 +50,26 @@ testing.x<-subset(testing.x, select = -c(X))
 testing.x[,cnvrt.factor]<- lapply(testing.x[,cnvrt.factor] , factor)
 testing.y<-subset(testing.y, select = -c(X))
 testing.y<- as.factor(testing.y$x)
+```
 
+## Model Tuning
+Traing a Classfication Tree Model having the with 10 fold cross validation method
+
+```{r}
 
 train_control<- trainControl(method="cv", number=10)
 
-# train the model 
+
 
 clasmodel<- train(x=training.x, y=training.y, trControl=train_control, method="rpart")
 clasmodel
 plot(clasmodel)
+```
+
 
 # Model Validation
+
+```{r}
 tree.pred<- predict(clasmodel, testing.x)
 testResultsTREE <- data.frame(obs = testing.y, pred = tree.pred)
 tree.summary<-defaultSummary(testResultsTREE)

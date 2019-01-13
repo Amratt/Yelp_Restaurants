@@ -1,5 +1,5 @@
 ---
-title: "yelp"
+title: "Yelp"
 author: "Amr Attyah"
 date: "1/13/2019"
 output: 
@@ -16,87 +16,20 @@ library(rpart)				        # Popular decision tree algorithm
 library(rpart.plot)			    	# Enhanced tree plots
 library(RColorBrewer)			  	# Color selection for fancy tree plot
 library(party)					      # Alternative decision tree algorithm
-```
-
-```
-## Loading required package: grid
-```
-
-```
-## Loading required package: mvtnorm
-```
-
-```
-## Loading required package: modeltools
-```
-
-```
-## Loading required package: stats4
-```
-
-```
-## Loading required package: strucchange
-```
-
-```
-## Loading required package: zoo
-```
-
-```
-## 
-## Attaching package: 'zoo'
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     as.Date, as.Date.numeric
-```
-
-```
-## Loading required package: sandwich
-```
-
-```r
 library(partykit)				      # Convert rpart object to BinaryTree
-```
-
-```
-## Loading required package: libcoin
-```
-
-```
-## 
-## Attaching package: 'partykit'
-```
-
-```
-## The following objects are masked from 'package:party':
-## 
-##     cforest, ctree, ctree_control, edge_simple, mob, mob_control,
-##     node_barplot, node_bivplot, node_boxplot, node_inner,
-##     node_surv, node_terminal, varimp
-```
-
-```r
 library(caret)					      # Just a data source for this script
-```
-
-```
-## Loading required package: lattice
-```
-
-```
-## Loading required package: ggplot2
-```
-
-```r
 library(e1071)
 library(tree)
 library(data.table)
 library(ggplot2)
 library(gridExtra)
+```
 
+
+## Loading Yelp Dataselt
+Dataset can be found here see <https://www.kaggle.com/yelp-dataset/yelp-dataset/data>.
+
+```r
 # load
 training.x<-read.csv("training.x.csv")
 training.x<-training.x[,-19]
@@ -104,8 +37,11 @@ training.y<-read.csv("training.y.csv")
 testing.x<-read.csv("testing.x.csv")
 testing.x<- testing.x[,-19]
 testing.y<- read.csv("testing.y.csv")
+```
 
+## Cleaning The Dataset
 
+```r
 cnvrt.factor <- c(2:16)
 training.x<-subset(training.x, select = -c(X))
 training.x[,cnvrt.factor]<- lapply(training.x[,cnvrt.factor], factor)
@@ -115,11 +51,16 @@ testing.x<-subset(testing.x, select = -c(X))
 testing.x[,cnvrt.factor]<- lapply(testing.x[,cnvrt.factor] , factor)
 testing.y<-subset(testing.y, select = -c(X))
 testing.y<- as.factor(testing.y$x)
+```
+
+## Model Tuning
+Traing a Classfication Tree Model having the with 10 fold cross validation method
 
 
+```r
 train_control<- trainControl(method="cv", number=10)
 
-# train the model 
+
 
 clasmodel<- train(x=training.x, y=training.y, trControl=train_control, method="rpart")
 clasmodel
@@ -134,13 +75,13 @@ clasmodel
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 15802, 15802, 15802, 15803, 15802, 15802, ... 
+## Summary of sample sizes: 15802, 15802, 15803, 15802, 15802, 15803, ... 
 ## Resampling results across tuning parameters:
 ## 
 ##   cp          Accuracy   Kappa    
-##   0.04216216  0.9495959  0.7125984
-##   0.05675676  0.9411659  0.6368187
-##   0.06283784  0.9211725  0.3650950
+##   0.04216216  0.9483990  0.7040519
+##   0.05675676  0.9396291  0.6278712
+##   0.06283784  0.9151978  0.2915288
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
 ## The final value used for the model was cp = 0.04216216.
@@ -150,10 +91,13 @@ clasmodel
 plot(clasmodel)
 ```
 
-![](yelp_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+![](yelp_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+
+# Model Validation
+
 
 ```r
-# Model Validation
 tree.pred<- predict(clasmodel, testing.x)
 testResultsTREE <- data.frame(obs = testing.y, pred = tree.pred)
 tree.summary<-defaultSummary(testResultsTREE)
@@ -238,7 +182,7 @@ abline(0,1, lty = 300, col = "green",  lwd = 3)
 grid(col="aquamarine")
 ```
 
-![](yelp_files/figure-html/unnamed-chunk-1-2.png)<!-- -->
+![](yelp_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 ```r
 # AUC
