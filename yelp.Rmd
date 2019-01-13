@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Loading Libraries
-```{r}
+```{r message=FALSE}
 library(rpart)				        # Popular decision tree algorithm
 library(rpart.plot)			    	# Enhanced tree plots
 library(RColorBrewer)			  	# Color selection for fancy tree plot
@@ -24,7 +24,12 @@ library(tree)
 library(data.table)
 library(ggplot2)
 library(gridExtra)
+```
 
+
+## Loading Yelp Dataselt
+Dataset can be found here see <https://www.kaggle.com/yelp-dataset/yelp-dataset/data>.
+```{r}
 # load
 training.x<-read.csv("training.x.csv")
 training.x<-training.x[,-19]
@@ -32,7 +37,7 @@ training.y<-read.csv("training.y.csv")
 testing.x<-read.csv("testing.x.csv")
 testing.x<- testing.x[,-19]
 testing.y<- read.csv("testing.y.csv")
-
+```
 
 cnvrt.factor <- c(2:16)
 training.x<-subset(training.x, select = -c(X))
