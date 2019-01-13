@@ -1,0 +1,108 @@
+---
+title: "yelp"
+author: "Amr Attyah"
+date: "1/13/2019"
+output: 
+  html_document:
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading Libraries
+```{r message=FALSE}
+library(rpart)				        # Popular decision tree algorithm
+library(rpart.plot)			    	# Enhanced tree plots
+library(RColorBrewer)			  	# Color selection for fancy tree plot
+library(party)					      # Alternative decision tree algorithm
+library(partykit)				      # Convert rpart object to BinaryTree
+library(caret)					      # Just a data source for this script
+library(e1071)
+library(tree)
+library(data.table)
+library(ggplot2)
+library(gridExtra)
+```
+
+## Loading the Yelp Dataset
+```{r message=FALSE}
+# load
+training.x<-read.csv("training.x.csv")
+training.x<-training.x[,-19]
+training.y<-read.csv("training.y.csv")
+testing.x<-read.csv("testing.x.csv")
+testing.x<- testing.x[,-19]
+testing.y<- read.csv("testing.y.csv")
+```
+
+# Cleaning Dataset
+
+```{r message=FALSE}
+cnvrt.factor <- c(2:16)
+training.x<-subset(training.x, select = -c(X))
+training.x[,cnvrt.factor]<- lapply(training.x[,cnvrt.factor], factor)
+training.y<-subset(training.y, select = -c(X))
+training.y<- as.factor(training.y$x)
+testing.x<-subset(testing.x, select = -c(X))
+testing.x[,cnvrt.factor]<- lapply(testing.x[,cnvrt.factor] , factor)
+testing.y<-subset(testing.y, select = -c(X))
+testing.y<- as.factor(testing.y$x)
+```
+
+## Model Tuning For Classfication Tree 
+```{r}
+train_control<- trainControl(method="cv", number=10)
+
+# train the model 
+
+clasmodel<- train(x=training.x, y=training.y, trControl=train_control, method="rpart")
+clasmodel
+plot(clasmodel)
+```
+
+## Model Validation
+```{r}
+tree.pred<- predict(clasmodel, testing.x)
+testResultsTREE <- data.frame(obs = testing.y, pred = tree.pred)
+tree.summary<-defaultSummary(testResultsTREE)
+cm.tree2<-confusionMatrix(tree.pred,testing.y, positive = "Good")
+cm.tree2
+```
+
+```{r message=FALSE}
+# ROC
+
+# convert good to 1, bad to 0
+goodbad<- function(x){
+        if (x=="Good"){
+                return(1)
+        }
+        else{
+                return(0)
+        }
+}
+test.converted<-sapply(testResultsTREE$obs,goodbad) 
+pred.converted<-sapply(testResultsTREE$pred,goodbad)
+
+library(ROCR)
+
+tree_scores <- prediction(pred.converted, test.converted)
+
+#ROC Curve
+tree_perf <- performance(tree_scores, "tpr", "fpr")
+
+plot(tree_perf,
+     main="classification tree ROC Curves",
+     xlab="1 - Specificity: False Positive Rate",
+     ylab="Sensitivity: True Positive Rate",
+     col="darkblue",  lwd = 3)
+abline(0,1, lty = 300, col = "green",  lwd = 3)
+grid(col="aquamarine")
+
+# AUC
+tree_auc <- performance(tree_scores, "auc")
+tree_auc2<- as.numeric(tree_auc@y.values)
+tree_auc2 # Area Under the Curve
+```
