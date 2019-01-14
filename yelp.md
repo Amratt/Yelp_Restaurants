@@ -78,13 +78,13 @@ clasmodel
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 15803, 15802, 15802, 15802, 15802, 15802, ... 
+## Summary of sample sizes: 15802, 15802, 15802, 15802, 15802, 15802, ... 
 ## Resampling results across tuning parameters:
 ## 
 ##   cp          Accuracy   Kappa    
-##   0.04216216  0.9470327  0.6946820
-##   0.05675676  0.9390593  0.6209058
-##   0.06283784  0.9170176  0.3299373
+##   0.04216216  0.9478304  0.7008136
+##   0.05675676  0.9412806  0.6425956
+##   0.06283784  0.9101816  0.2280779
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
 ## The final value used for the model was cp = 0.04216216.
@@ -200,16 +200,26 @@ tree_auc2 # Area Under the Curve
 ## [1] 0.8332471
 ```
 
-## Variable Importance
+We can also look deep into the classfication tree and see how the tree make its decompositions 
 
+
+```r
+tree1 <- rpart(training.y~., training, cp = 0.04216216)
+rpart.plot(tree1) 
+```
+
+![](yelp_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
+## Variable Importance
+We will see the most important variable and confirm if the top 3 variables are the same as the decesion tree graph
 
 ```r
 plot(varImp(clasmodel))
 ```
 
-![](yelp_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](yelp_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
-From the graph above we can see that the 2 top most important variables that make restaurants get 3 stars or more on Yelp are checking peoples coats and having an outdoor seating
+From the graph above we can see that the 3 top most important variables that make restaurants get 3 stars or more on Yelp are checking peoples coats, having an outdoor seating, and  dogs allowed
 
 To see if this is true we can analyze the 2 variables visually 
 
@@ -232,10 +242,8 @@ p1<-ggplot(data = training) +
 p1
 ```
 
-![](yelp_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](yelp_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 The graph above shows that restaurant that has coat checks and outdoor seating is the most likely to have 3 stars or higher on Yelp
-
-We can also look deep into the classfication tree and see how the tree make its decompositions 
 
 

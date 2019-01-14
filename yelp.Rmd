@@ -120,13 +120,21 @@ tree_auc2<- as.numeric(tree_auc@y.values)
 tree_auc2 # Area Under the Curve
 ```
 
-## Variable Importance
+We can also look deep into the classfication tree and see how the tree make its decompositions 
 
+```{r}
+tree1 <- rpart(training.y~., training, cp = 0.04216216)
+rpart.plot(tree1) 
+
+```
+
+## Variable Importance
+We will see the most important variable and confirm if the top 3 variables are the same as the decesion tree graph
 ```{r}
 plot(varImp(clasmodel))
 ```
 
-From the graph above we can see that the 2 top most important variables that make restaurants get 3 stars or more on Yelp are checking peoples coats and having an outdoor seating
+From the graph above we can see that the 3 top most important variables that make restaurants get 3 stars or more on Yelp are checking peoples coats, having an outdoor seating, and  dogs allowed
 
 To see if this is true we can analyze the 2 variables visually 
 ```{r message=FALSE}
@@ -151,7 +159,4 @@ p1
 
 The graph above shows that restaurant that has coat checks and outdoor seating is the most likely to have 3 stars or higher on Yelp
 
-We can also look deep into the classfication tree and see how the tree make its decompositions 
 
-```{r}
-```
