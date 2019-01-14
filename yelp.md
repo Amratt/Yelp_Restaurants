@@ -78,13 +78,13 @@ clasmodel
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 15802, 15802, 15802, 15802, 15802, 15802, ... 
+## Summary of sample sizes: 15802, 15802, 15802, 15802, 15803, 15802, ... 
 ## Resampling results across tuning parameters:
 ## 
 ##   cp          Accuracy   Kappa    
-##   0.04216216  0.9478304  0.7008136
-##   0.05675676  0.9412806  0.6425956
-##   0.06283784  0.9101816  0.2280779
+##   0.04216216  0.9495389  0.7121401
+##   0.05675676  0.9399124  0.6256322
+##   0.06283784  0.9095571  0.2197573
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
 ## The final value used for the model was cp = 0.04216216.
