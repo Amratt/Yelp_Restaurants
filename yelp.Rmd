@@ -75,7 +75,10 @@ testResultsTREE <- data.frame(obs = testing.y, pred = tree.pred)
 tree.summary<-defaultSummary(testResultsTREE)
 cm.tree2<-confusionMatrix(tree.pred,testing.y, positive = "Good")
 cm.tree2
+```
 
+# Model Validation using ROC
+```{r}
 # ROC
 
 # convert good to 1, bad to 0
@@ -111,3 +114,8 @@ tree_auc2<- as.numeric(tree_auc@y.values)
 tree_auc2 # Area Under the Curve
 ```
 
+## Variable Importance
+
+```{r}
+plot(varImp(clasmodel))
+```

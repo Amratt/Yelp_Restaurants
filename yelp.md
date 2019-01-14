@@ -79,9 +79,9 @@ clasmodel
 ## Resampling results across tuning parameters:
 ## 
 ##   cp          Accuracy   Kappa    
-##   0.04216216  0.9490267  0.7087346
-##   0.05675676  0.9395150  0.6234661
-##   0.06283784  0.9137143  0.2790686
+##   0.04216216  0.9473176  0.6972836
+##   0.05675676  0.9392869  0.6242661
+##   0.06283784  0.9171881  0.3309804
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
 ## The final value used for the model was cp = 0.04216216.
@@ -134,6 +134,8 @@ cm.tree2
 ## 
 ```
 
+# Model Validation using ROC
+
 ```r
 # ROC
 
@@ -182,7 +184,7 @@ abline(0,1, lty = 300, col = "green",  lwd = 3)
 grid(col="aquamarine")
 ```
 
-![](yelp_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](yelp_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 ```r
 # AUC
@@ -195,3 +197,11 @@ tree_auc2 # Area Under the Curve
 ## [1] 0.8332471
 ```
 
+## Variable Importance
+
+
+```r
+plot(varImp(clasmodel))
+```
+
+![](yelp_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
