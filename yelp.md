@@ -23,6 +23,7 @@ library(tree)
 library(data.table)
 library(ggplot2)
 library(gridExtra)
+library(plyr)
 ```
 
 
@@ -51,6 +52,8 @@ testing.x<-subset(testing.x, select = -c(X))
 testing.x[,cnvrt.factor]<- lapply(testing.x[,cnvrt.factor] , factor)
 testing.y<-subset(testing.y, select = -c(X))
 testing.y<- as.factor(testing.y$x)
+
+training<- cbind(training.x,training.y)
 ```
 
 ## Model Tuning
@@ -75,13 +78,13 @@ clasmodel
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 15802, 15803, 15802, 15802, 15802, 15802, ... 
+## Summary of sample sizes: 15802, 15802, 15802, 15802, 15802, 15802, ... 
 ## Resampling results across tuning parameters:
 ## 
 ##   cp          Accuracy   Kappa    
-##   0.04216216  0.9483993  0.7050288
-##   0.05675676  0.9390020  0.6191738
-##   0.06283784  0.9136572  0.2802035
+##   0.04216216  0.9476596  0.6997754
+##   0.05675676  0.9392861  0.6255939
+##   0.06283784  0.9125777  0.2705621
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
 ## The final value used for the model was cp = 0.04216216.
@@ -205,3 +208,34 @@ plot(varImp(clasmodel))
 ```
 
 ![](yelp_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
+From the graph above we can see that the 2 top most important variables that make restaurants get 3 stars or more on Yelp are checking peoples coats and having an outdoor seating
+
+To see if this is true we can analyze the 2 variables visually 
+
+```r
+training$CoatCheck<-revalue(training$CoatCheck, c("1"="Has Coat Check", "0"="No Coat Check"))
+
+training$OutdoorSeating<-revalue(training$OutdoorSeating, c("1"="Has Outdoor Seating", "0"="No Outdoor Seating"))
+
+training$DogsAllowed<-revalue(training$DogsAllowed, c("1"="Dogs Are Allowed", "0"="Dogs Not Allowed"))
+```
+
+
+```r
+p1<-ggplot(data = training) +
+        geom_bar(aes(x = factor(CoatCheck), fill =  factor(training.y)), position = "fill",width = 0.3)+
+        xlab("Restaurant")+
+        ylab("Ratios")+
+       labs(fill="CoatCheck")+ # Good (most low star resturants does not have valet, so it could be a good predictor)
+ facet_wrap(~ factor(OutdoorSeating))
+p1
+```
+
+![](yelp_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+
+The graph above shows that restaurant that has coat checks and outdoor seating is the most likely to have 3 stars or higher on Yelp
+
+We can also look deep into the classfication tree and see how the tree make its decompositions 
+
+
